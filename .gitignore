@@ -1,0 +1,24 @@
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.tar.gz
+*.zip
+
+# IDEs and editors
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.factorypath
+bin/
+.vscode/
+
+# Logs
+*.log
+
+# System files
+Thumbs.db
+.DS_Store
