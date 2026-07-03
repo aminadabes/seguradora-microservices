@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -54,6 +55,19 @@ class PropostaControllerIT {
         // Extrair ID da resposta
         Number idObj = objectMapper.readTree(responseJson).path("data").path("id").numberValue();
         Long propostaId = idObj.longValue();
+
+        // 1.1. Consultar Proposta por ID
+        mockMvc.perform(get("/api/propostas/{id}", propostaId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data.id", is(propostaId.intValue())))
+                .andExpect(jsonPath("$.data.clienteNome", is("José da Silva")));
+
+        // 1.2. Consultar Proposta Inexistente por ID
+        mockMvc.perform(get("/api/propostas/{id}", 999L))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success", is(false)))
+                .andExpect(jsonPath("$.error", containsString("Proposta não encontrada")));
 
         // 2. Aprovar Proposta
         mockMvc.perform(put("/api/propostas/{id}/aprovar", propostaId))

@@ -6,12 +6,14 @@ import com.seguradora.proposta.adapter.in.rest.dto.PropostaResponse;
 import com.seguradora.proposta.domain.model.Proposta;
 import com.seguradora.proposta.domain.model.Result;
 import com.seguradora.proposta.domain.port.in.AtualizarStatusPropostaUseCase;
+import com.seguradora.proposta.domain.port.in.BuscarPropostaUseCase;
 import com.seguradora.proposta.domain.port.in.ContratarPropostaUseCase;
 import com.seguradora.proposta.domain.port.in.CriarPropostaUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +29,7 @@ public class PropostaController {
     private final CriarPropostaUseCase criarPropostaUseCase;
     private final AtualizarStatusPropostaUseCase atualizarStatusPropostaUseCase;
     private final ContratarPropostaUseCase contratarPropostaUseCase;
+    private final BuscarPropostaUseCase buscarPropostaUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponse<PropostaResponse>> criar(@Valid @RequestBody PropostaRequest request) {
@@ -68,6 +71,15 @@ public class PropostaController {
             return ResponseEntity.badRequest().body(ApiResponse.failure(result.getError()));
         }
 
+        return ResponseEntity.ok(ApiResponse.success(PropostaResponse.fromDomain(result.getValue())));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PropostaResponse>> buscarPorId(@PathVariable Long id) {
+        Result<Proposta> result = buscarPropostaUseCase.buscarPorId(id);
+        if (result.isFailure()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure(result.getError()));
+        }
         return ResponseEntity.ok(ApiResponse.success(PropostaResponse.fromDomain(result.getValue())));
     }
 }
