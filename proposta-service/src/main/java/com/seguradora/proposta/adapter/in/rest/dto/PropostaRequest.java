@@ -1,5 +1,6 @@
 package com.seguradora.proposta.adapter.in.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class PropostaRequest {
 
+    @JsonAlias("valorSegurado")
     @NotNull(message = "O valor da proposta é obrigatório")
     @Positive(message = "O valor deve ser maior que zero")
     private Double valor;
